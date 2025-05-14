@@ -8,25 +8,40 @@ export default function PaginaGeradorEstampa() {
   const [cores, setCores] = useState('');
   const [fundo, setFundo] = useState('');
   const [imagens, setImagens] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const gerarImagens = async () => {
+    setLoading(true);
     const prompt = gerarPrompt({ estilo, cores, fundo });
 
     const urls = await Promise.all([
-      fetchGeradorIA(prompt),
-      fetchGeradorIA(prompt + ' variação')
+      fetchDalleImage(prompt),
+      fetchDalleImage(prompt + ' com variações')
     ]);
 
     setImagens(urls);
+    setLoading(false);
   };
 
-  const fetchGeradorIA = async (prompt) => {
-    console.log('Gerando imagem com prompt:', prompt);
-    return 'https://via.placeholder.com/300x300.png?text=Estampa';
+  const fetchDalleImage = async (prompt) => {
+    const response = await fetch("/api/gerar-imagem", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await response.json();
+    return data.url;
   };
 
   const gerarPSD = () => {
-    alert('Função de exportar para PSD em construção.');
+    imagens.forEach((url, i) => {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `estampa_${i + 1}.psd`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
   };
 
   const refazerEstampa = () => {
@@ -40,7 +55,9 @@ export default function PaginaGeradorEstampa() {
       <input placeholder="Estilo da estampa" value={estilo} onChange={(e) => setEstilo(e.target.value)} />
       <input placeholder="Cores principais" value={cores} onChange={(e) => setCores(e.target.value)} />
       <input placeholder="Cor de fundo" value={fundo} onChange={(e) => setFundo(e.target.value)} />
-      <button onClick={gerarImagens}>Gerar imagem com IA</button>
+      <button onClick={gerarImagens} disabled={loading}>
+        {loading ? 'Gerando...' : 'Gerar imagem com IA'}
+      </button>
 
       {imagens.length > 0 && (
         <EstampaPreview

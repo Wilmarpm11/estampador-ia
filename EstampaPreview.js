@@ -24,9 +24,10 @@ export default function EstampaPreview({ imagens, onRefazer, onGerarPSD }) {
           display: flex;
           justify-content: center;
           gap: 1rem;
+          flex-wrap: wrap;
         }
         .estampa-preview {
-          max-width: 300px;
+          max-width: 400px;
           border-radius: 8px;
           box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
