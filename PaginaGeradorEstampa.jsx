@@ -16,7 +16,7 @@ export default function PaginaGeradorEstampa() {
 
     const urls = await Promise.all([
       fetchDalleImage(prompt),
-      fetchDalleImage(prompt + ' com variações')
+      fetchDalleImage(prompt + ' com variações realistas')
     ]);
 
     setImagens(urls);
@@ -33,17 +33,6 @@ export default function PaginaGeradorEstampa() {
     return data.url;
   };
 
-  const gerarPSD = () => {
-    imagens.forEach((url, i) => {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `estampa_${i + 1}.psd`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-  };
-
   const refazerEstampa = () => {
     setImagens([]);
     gerarImagens();
@@ -51,40 +40,20 @@ export default function PaginaGeradorEstampa() {
 
   return (
     <div className="pagina">
-      <h1>Gerador de Estampa com IA</h1>
-      <input placeholder="Estilo da estampa" value={estilo} onChange={(e) => setEstilo(e.target.value)} />
-      <input placeholder="Cores principais" value={cores} onChange={(e) => setCores(e.target.value)} />
-      <input placeholder="Cor de fundo" value={fundo} onChange={(e) => setFundo(e.target.value)} />
+      <h1>Gerador de Estampa para Impressão</h1>
+      <input placeholder="Estilo da estampa (ex: folhagem natural, onça)" value={estilo} onChange={(e) => setEstilo(e.target.value)} />
+      <input placeholder="Cores principais (ex: verde, bege, azul petróleo)" value={cores} onChange={(e) => setCores(e.target.value)} />
+      <input placeholder="Cor de fundo (ex: branco, areia, lilás claro)" value={fundo} onChange={(e) => setFundo(e.target.value)} />
       <button onClick={gerarImagens} disabled={loading}>
-        {loading ? 'Gerando...' : 'Gerar imagem com IA'}
+        {loading ? 'Gerando estampa...' : 'Gerar estampa'}
       </button>
 
       {imagens.length > 0 && (
         <EstampaPreview
           imagens={imagens}
-          onGerarPSD={gerarPSD}
           onRefazer={refazerEstampa}
         />
       )}
-
-      <style jsx>{`
-        .pagina {
-          max-width: 600px;
-          margin: 0 auto;
-          text-align: center;
-        }
-        input {
-          display: block;
-          margin: 0.5rem auto;
-          padding: 0.5rem;
-          width: 100%;
-          max-width: 400px;
-        }
-        button {
-          margin-top: 1rem;
-          padding: 0.6rem 1.2rem;
-        }
-      `}</style>
     </div>
   );
 }
