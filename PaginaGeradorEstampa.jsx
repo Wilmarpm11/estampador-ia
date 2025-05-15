@@ -1,7 +1,5 @@
 
 import React, { useState } from 'react';
-import { gerarPrompt } from './geradorPrompt';
-import EstampaPreview from './EstampaPreview';
 
 export default function PaginaGeradorEstampa() {
   const [estilo, setEstilo] = useState('');
@@ -10,6 +8,10 @@ export default function PaginaGeradorEstampa() {
   const [imagens, setImagens] = useState([]);
   const [loading, setLoading] = useState(false);
   const [erroBigJPG, setErroBigJPG] = useState(false);
+
+  const gerarPrompt = ({ estilo, cores, fundo }) => {
+    return `Estampa com estilo ${estilo}, nas cores ${cores}, com fundo ${fundo}, realista, tileável, 300DPI, 50x50cm, padrão CMYK.`;
+  };
 
   const gerarImagens = async () => {
     const prompt = gerarPrompt({ estilo, cores, fundo });
@@ -30,11 +32,43 @@ export default function PaginaGeradorEstampa() {
     return 'https://via.placeholder.com/1024x1024.png?text=Estampa+Alta';
   };
 
-  const gerarPSD = (index) => {
-    alert(`Iniciando download da estampa ${index + 1} em alta qualidade com BigJPG (upscale 8x)...`);
+  const upscaleComBigJPG = async (imageUrl) => {
+    const apiKey = process.env.NEXT_PUBLIC_BIGJPG_API_KEY;
     try {
-      window.open(imagens[index], '_blank');
+      const criarTarefa = await fetch('https://bigjpg.com/api/task/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          input: imageUrl,
+          type: 'photo',
+          noise: 3,
+          scale: 8,
+        }),
+      });
+
+      const { id } = await criarTarefa.json();
+
+      for (let i = 0; i < 10; i++) {
+        await new Promise((res) => setTimeout(res, 4000));
+        const statusResp = await fetch(`https://bigjpg.com/api/task/${id}/`, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+          },
+        });
+
+        const status = await statusResp.json();
+        if (status.status === 'success' && status.output_url) {
+          window.open(status.output_url, '_blank');
+          return;
+        }
+      }
+
+      throw new Error('Upscale demorou demais ou falhou.');
     } catch (error) {
+      console.error('Erro no BigJPG:', error);
       setErroBigJPG(true);
     }
   };
@@ -59,7 +93,7 @@ export default function PaginaGeradorEstampa() {
           {imagens.map((url, index) => (
             <div key={index} className="estampa">
               <img src={url} alt={`Estampa ${index + 1}`} />
-              <button onClick={() => gerarPSD(index)}>Baixar p/ Impressão</button>
+              <button onClick={() => upscaleComBigJPG(url)}>Baixar p/ Impressão</button>
             </div>
           ))}
           <button onClick={refazerEstampa}>Refazer Estampa</button>
@@ -96,10 +130,13 @@ export default function PaginaGeradorEstampa() {
           align-items: center;
         }
         .estampa img {
-          max-width: 300px;
-          max-height: 300px;
+          width: 100%;
+          max-width: 480px;
+          height: auto;
           margin-bottom: 0.5rem;
           border: 1px solid #ccc;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
       `}</style>
     </div>
