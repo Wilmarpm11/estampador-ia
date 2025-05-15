@@ -69,7 +69,11 @@ export default function PaginaGeradorEstampa() {
       throw new Error('Upscale demorou demais ou falhou.');
     } catch (error) {
       console.error('Erro no BigJPG:', error);
-      setErroBigJPG(true);
+      if (error.message.toLowerCase().includes('401') || error.message.toLowerCase().includes('unauthorized')) {
+        setErroBigJPG(true);
+      } else {
+        alert('Erro ao ampliar imagem. Tente novamente mais tarde ou verifique sua conexão.');
+      }
     }
   };
 
