@@ -1,1 +1,0 @@
-// Substituído diretamente na PaginaGeradorEstampa.jsx
