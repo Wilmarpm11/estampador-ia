@@ -1,32 +1,42 @@
-
 import React from 'react';
 
-export default function EstampaPreview({ imagens, onDownloadAlta }) {
+export default function EstampaPreview({ imagens, onGerarPSD, onRefazer, onDownloadAlta }) {
   return (
     <div className="preview-container">
-      {imagens.map((url, index) => (
-        <div key={index} className="estampa-box">
-          <img src={url} alt={`Estampa ${index + 1}`} />
-          <button onClick={() => onDownloadAlta(url, index)}>Baixar p/ Impressão</button>
-        </div>
-      ))}
+      <div className="grid">
+        {imagens.map((url, index) => (
+          <div key={index} className="preview-box">
+            <img src={url} alt={`Estampa ${index + 1}`} className="preview-img" />
+            <button onClick={() => onDownloadAlta(index)}>Baixar p/ Impressão</button>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: '1rem' }}>
+        <button onClick={onGerarPSD}>Simular PSD</button>
+        <button onClick={onRefazer}>Refazer Estampa</button>
+      </div>
       <style jsx>{`
         .preview-container {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
           margin-top: 2rem;
-          flex-wrap: wrap;
-        }
-        .estampa-box {
           text-align: center;
         }
-        img {
-          max-width: 300px;
+        .grid {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+        .preview-box {
           border: 1px solid #ccc;
+          padding: 1rem;
+        }
+        .preview-img {
+          width: 300px;
+          height: auto;
         }
         button {
-          margin-top: 0.5rem;
+          display: block;
+          margin: 0.5rem auto 0;
         }
       `}</style>
     </div>

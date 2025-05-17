@@ -1,0 +1,1 @@
+Projeto Estampador com IA - versão final com visualização maior e botão de impressão.

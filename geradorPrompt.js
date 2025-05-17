@@ -1,5 +1,3 @@
-
 export function gerarPrompt({ estilo, cores, fundo }) {
-  return `Estampa tileável, natural, realista, para impressão digital em tecido de poliéster.
-Estilo: ${estilo}. Cores: ${cores}. Fundo: ${fundo}. Separação de elementos clara. Padrão CMYK, 300DPI, 50x50cm.`;
+  return `Uma estampa digital de alta qualidade, tileável, 300DPI, 50x50cm, para impressão em tecido poliéster. Estilo: ${estilo}. Cores principais: ${cores}. Fundo: ${fundo}. Deve ser realista, natural, com aparência de elementos separados, padrão CMYK, sem sobreposição artificial.`;
 }
