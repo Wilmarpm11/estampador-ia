@@ -1,1 +1,1 @@
-// geradorPrompt implementado
+// Prompt enfatizando naturalidade e tileável

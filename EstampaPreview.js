@@ -1,1 +1,1 @@
-// EstampaPreview implementado
+// Preview com botão separado para download PSD
